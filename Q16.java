@@ -194,11 +194,11 @@ class Insercao{
     }
 
 	public void sort(){
-        int comparacoes=0,movimentacoes=0;
+        int comparacoes=0,movimentacoes=0, k=10;
         for (int i = 1; i < tamanho-1; i++) {
 			Personagem tmp = criaPersonagem(arrayPersonagens[i]); 
             tmp.setDateOfBirth(arrayPersonagens[i].getDateOfBirth());
-            int j = i - 1;
+            int j = (i < k) ? i-1:k-1;
             while ((j >= 0) && (compareHairColour(arrayPersonagens[j], tmp))>=0){
                 arrayPersonagens[j + 1] = arrayPersonagens[j];
                 j--;
@@ -250,7 +250,8 @@ class Insercao{
     }
 
     public void escreverOrdenado(){
-        for(int j=0; j< tamanho-1; j++){
+        int k=10;
+        for(int j=0; j< k; j++){
             MyIO.print("["+arrayPersonagens[j].getId()+" ## "+arrayPersonagens[j].getName()+" ## {");
             for(int i=0; i < arrayPersonagens[j].getAlternate_names().size();i++){
                 if(i < arrayPersonagens[j].getAlternate_names().size()-1){
@@ -272,7 +273,7 @@ class Insercao{
 }
 
 
-public class Q7{
+public class Q16{
     static private String[] lerLinha(String linha){
         String[] linhaLida = linha.split(";");
         for(int i=0; i<linhaLida.length;i++){

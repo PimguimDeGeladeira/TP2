@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
-class Personagem implements Cloneable{
+class Personagem{
     private String id;
     private String name;
     private List<String> alternate_names;
@@ -174,79 +174,59 @@ class Personagem implements Cloneable{
         MyIO.print(dataFormatada.format(dateOfBirth));
         MyIO.println(" ## "+yearOfBirth+" ## "+eyeColour+" ## "+gender+" ## "+hairColour+" ## "+wizard+"]");
     }
-
-    @Override
-        public Object clone() throws CloneNotSupportedException {
-            //Personagem clonedPersonagem = (Personagem) super.clone();
-            //clonedPersonagem.alternate_names = new ArrayList<>(this.alternate_names);
-        
-            return super.clone();
-        }
 }
 
-class Insercao{
+class Counting{
     private int tamanho;
     private Personagem[] arrayPersonagens;
+    private int movimentacoes =0;
+    private int comparacoes =0;
 	
-    public Insercao(Personagem[] arrayPersonagens){
+    public Counting(Personagem[] arrayPersonagens){
         this.arrayPersonagens = arrayPersonagens;
         tamanho = arrayPersonagens.length;
     }
 
-	public void sort(){
-        int comparacoes=0,movimentacoes=0;
-        for (int i = 1; i < tamanho-1; i++) {
-			Personagem tmp = criaPersonagem(arrayPersonagens[i]); 
-            tmp.setDateOfBirth(arrayPersonagens[i].getDateOfBirth());
-            int j = i - 1;
-            while ((j >= 0) && (compareHairColour(arrayPersonagens[j], tmp))>=0){
-                arrayPersonagens[j + 1] = arrayPersonagens[j];
-                j--;
-                comparacoes++;
-                movimentacoes++;
-            }
-            arrayPersonagens[j + 1] = tmp;
-            comparacoes++;
-            movimentacoes++;
-        }
+	public void sort() {
+        //Array para contar o numero de ocorrencias de cada elemento
+        int[] count = new int[getMaior() + 1];
+        Personagem[] ordenado = new Personagem[tamanho-1];
+  
+        //Inicializar cada posicao do array de contagem 
+        for (int i = 0; i < count.length; count[i] = 0, i++);
+  
+        //Agora, o count[i] contem o numero de elemento iguais a i
+        for (int i = 0; i < tamanho-1; count[arrayPersonagens[i].getYearOfBirth()]++, i++);
+  
+        //Agora, o count[i] contem o numero de elemento menores ou iguais a i
+        for(int i = 1; i < count.length; count[i] += count[i-1], i++);
+  
+        //Ordenando
+        for(int i = tamanho-1-1; i >= 0; ordenado[count[arrayPersonagens[i].getYearOfBirth()]-1] = arrayPersonagens[i], count[arrayPersonagens[i].getYearOfBirth()]--, i--,movimentacoes++);
+  
+        //Copiando para o arrayPersonagens original
+        for(int i = 0; i < tamanho-1; arrayPersonagens[i] = ordenado[i], i++,movimentacoes++);
         Arq.print("824137");
         Arq.print('\t');
         Arq.print(comparacoes);
         Arq.print('\t');
         Arq.print(movimentacoes);
         Arq.print('\t');
-	}
-
-    public Personagem criaPersonagem(Personagem tmp){
-        String id = tmp.getId();
-        String name = tmp.getName();
-        List<String> alternate_names = tmp.getAlternate_names();
-        String house = tmp.getHouse();
-        String ancestry = tmp.getAncestry();
-        String species = tmp.getSpecies();
-        String patronus = tmp.getPatronus();
-        Boolean hogwartsStaff = tmp.getHogwartsStaff();
-        String hogwartsStudent = tmp.getHogwarstsStudent();
-        String actorName = tmp.getActorName();
-        Boolean alive = tmp.getAlive();
-        Date dateOfBirth = tmp.getDateOfBirth();
-        int yearOfBirth = tmp.getYearOfBirth();
-        String eyeColour = tmp.getEyeColour();
-        String gender = tmp.getGender();
-        String hairColour = tmp.getHairColour();
-        Boolean wizard = tmp.getWizard();
-        Personagem novoPersonagem = new Personagem(id,name,alternate_names,house,ancestry,species,patronus,hogwartsStaff,hogwartsStudent,actorName,alive,dateOfBirth,
-        yearOfBirth,eyeColour,gender,hairColour,wizard);                
-        
-        return novoPersonagem;
     }
-
-    public static int compareHairColour(Personagem p1, Personagem p2){
-        int comparacao = p1.getDateOfBirth().compareTo(p2.getDateOfBirth());
-        if(comparacao == 0){
-            return p1.getName().compareTo(p2.getName());
+      /**
+       * Retorna o maior elemento do arrayPersonagens.
+      * @return maior elemento
+       */
+    public int getMaior() {
+        int maior = arrayPersonagens[0].getYearOfBirth();
+  
+        for (int i = 0; i < tamanho-1; i++){
+            if(maior < arrayPersonagens[i].getYearOfBirth()){
+                maior = arrayPersonagens[i].getYearOfBirth();
+            }
+            comparacoes++;
         }
-        return comparacao;
+        return maior;	
     }
 
     public void escreverOrdenado(){
@@ -271,8 +251,55 @@ class Insercao{
     }
 }
 
+class Insercao{
+    private int tamanho;
+    private Personagem[] arrayPersonagens;
+	
+    public Insercao(Personagem[] arrayPersonagens){
+        this.arrayPersonagens = arrayPersonagens;
+        tamanho = arrayPersonagens.length;
+    }
 
-public class Q7{
+	public void sort(){
+        
+        for (int i = 1; i < tamanho-1; i++) {
+			Personagem tmp = criaPersonagem(arrayPersonagens[i]); 
+            tmp.setDateOfBirth(arrayPersonagens[i].getDateOfBirth());
+            int j = i - 1;
+            while ((j >= 0) && (arrayPersonagens[j].getName().compareTo(tmp.getName()))>=0){
+                arrayPersonagens[j + 1] = arrayPersonagens[j];
+                j--;
+            }
+            arrayPersonagens[j + 1] = tmp;
+        }
+    }
+        
+        public Personagem criaPersonagem(Personagem tmp){
+            String id = tmp.getId();
+            String name = tmp.getName();
+            List<String> alternate_names = tmp.getAlternate_names();
+            String house = tmp.getHouse();
+            String ancestry = tmp.getAncestry();
+            String species = tmp.getSpecies();
+            String patronus = tmp.getPatronus();
+            Boolean hogwartsStaff = tmp.getHogwartsStaff();
+            String hogwartsStudent = tmp.getHogwarstsStudent();
+            String actorName = tmp.getActorName();
+            Boolean alive = tmp.getAlive();
+            Date dateOfBirth = tmp.getDateOfBirth();
+            int yearOfBirth = tmp.getYearOfBirth();
+            String eyeColour = tmp.getEyeColour();
+            String gender = tmp.getGender();
+            String hairColour = tmp.getHairColour();
+            Boolean wizard = tmp.getWizard();
+            Personagem novoPersonagem = new Personagem(id,name,alternate_names,house,ancestry,species,patronus,hogwartsStaff,hogwartsStudent,actorName,alive,dateOfBirth,
+            yearOfBirth,eyeColour,gender,hairColour,wizard);                
+            
+            return novoPersonagem;
+        }
+	}
+
+public class Q11{
     static private String[] lerLinha(String linha){
         String[] linhaLida = linha.split(";");
         for(int i=0; i<linhaLida.length;i++){
@@ -358,10 +385,13 @@ public class Q7{
             leitura = teclado.nextLine();
             procura.add(leitura);
         }
-        Insercao ordenacaoInsercao = new Insercao(procuraPorId(personagens,procura));
-        Arq.openWrite("824137_insercao.txt");
+        Personagem [] listaParaOrdenar = procuraPorId(personagens, procura); 
+        Insercao ordenacaoInsercao = new Insercao(listaParaOrdenar);
+        Arq.openWrite("824137_countingsort.txt");
         ordenacaoInsercao.sort();
-        ordenacaoInsercao.escreverOrdenado();
+        Counting ordenacaoCounting = new Counting(listaParaOrdenar);
+        ordenacaoCounting.sort();
+        ordenacaoCounting.escreverOrdenado();
         teclado.close();
         long fim = System.currentTimeMillis(); 
         long tempo = (fim-inicio);

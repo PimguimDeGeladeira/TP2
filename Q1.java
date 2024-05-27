@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
-class Personagem implements Cloneable{
+class Personagem{
     private String id;
     private String name;
     private List<String> alternate_names;
@@ -174,110 +174,14 @@ class Personagem implements Cloneable{
         MyIO.print(dataFormatada.format(dateOfBirth));
         MyIO.println(" ## "+yearOfBirth+" ## "+eyeColour+" ## "+gender+" ## "+hairColour+" ## "+wizard+"]");
     }
-
-    @Override
-        public Object clone() throws CloneNotSupportedException {
-            //Personagem clonedPersonagem = (Personagem) super.clone();
-            //clonedPersonagem.alternate_names = new ArrayList<>(this.alternate_names);
-        
-            return super.clone();
-        }
 }
 
-class Insercao{
-    private int tamanho;
-    private Personagem[] arrayPersonagens;
-	
-    public Insercao(Personagem[] arrayPersonagens){
-        this.arrayPersonagens = arrayPersonagens;
-        tamanho = arrayPersonagens.length;
-    }
-
-	public void sort(){
-        int comparacoes=0,movimentacoes=0;
-        for (int i = 1; i < tamanho-1; i++) {
-			Personagem tmp = criaPersonagem(arrayPersonagens[i]); 
-            tmp.setDateOfBirth(arrayPersonagens[i].getDateOfBirth());
-            int j = i - 1;
-            while ((j >= 0) && (compareHairColour(arrayPersonagens[j], tmp))>=0){
-                arrayPersonagens[j + 1] = arrayPersonagens[j];
-                j--;
-                comparacoes++;
-                movimentacoes++;
-            }
-            arrayPersonagens[j + 1] = tmp;
-            comparacoes++;
-            movimentacoes++;
-        }
-        Arq.print("824137");
-        Arq.print('\t');
-        Arq.print(comparacoes);
-        Arq.print('\t');
-        Arq.print(movimentacoes);
-        Arq.print('\t');
-	}
-
-    public Personagem criaPersonagem(Personagem tmp){
-        String id = tmp.getId();
-        String name = tmp.getName();
-        List<String> alternate_names = tmp.getAlternate_names();
-        String house = tmp.getHouse();
-        String ancestry = tmp.getAncestry();
-        String species = tmp.getSpecies();
-        String patronus = tmp.getPatronus();
-        Boolean hogwartsStaff = tmp.getHogwartsStaff();
-        String hogwartsStudent = tmp.getHogwarstsStudent();
-        String actorName = tmp.getActorName();
-        Boolean alive = tmp.getAlive();
-        Date dateOfBirth = tmp.getDateOfBirth();
-        int yearOfBirth = tmp.getYearOfBirth();
-        String eyeColour = tmp.getEyeColour();
-        String gender = tmp.getGender();
-        String hairColour = tmp.getHairColour();
-        Boolean wizard = tmp.getWizard();
-        Personagem novoPersonagem = new Personagem(id,name,alternate_names,house,ancestry,species,patronus,hogwartsStaff,hogwartsStudent,actorName,alive,dateOfBirth,
-        yearOfBirth,eyeColour,gender,hairColour,wizard);                
-        
-        return novoPersonagem;
-    }
-
-    public static int compareHairColour(Personagem p1, Personagem p2){
-        int comparacao = p1.getDateOfBirth().compareTo(p2.getDateOfBirth());
-        if(comparacao == 0){
-            return p1.getName().compareTo(p2.getName());
-        }
-        return comparacao;
-    }
-
-    public void escreverOrdenado(){
-        for(int j=0; j< tamanho-1; j++){
-            MyIO.print("["+arrayPersonagens[j].getId()+" ## "+arrayPersonagens[j].getName()+" ## {");
-            for(int i=0; i < arrayPersonagens[j].getAlternate_names().size();i++){
-                if(i < arrayPersonagens[j].getAlternate_names().size()-1){
-                    MyIO.print(arrayPersonagens[j].getAlternate_names().get(i)+",");
-                }else{            
-                    MyIO.print(arrayPersonagens[j].getAlternate_names().get(i));
-                }
-            }
-            MyIO.print("} ## "+arrayPersonagens[j].getHouse()+" ## "+arrayPersonagens[j].getAncestry()+" ## "+arrayPersonagens[j].getSpecies()+" ## "+
-            arrayPersonagens[j].getPatronus()+" ## "+arrayPersonagens[j].getHogwartsStaff()+" ## ");
-            if(arrayPersonagens[j].getHogwarstsStudent().equals("VERDADEIRO")){MyIO.print("true");}else{MyIO.print("false");}
-            MyIO.print(" ## "+arrayPersonagens[j].getActorName()+" ## "+arrayPersonagens[j].getAlive()+" ## ");
-            SimpleDateFormat dataFormatada = new SimpleDateFormat("dd-MM-yyyy");
-            MyIO.print(dataFormatada.format(arrayPersonagens[j].getDateOfBirth()));
-            MyIO.println(" ## "+arrayPersonagens[j].getYearOfBirth()+" ## "+arrayPersonagens[j].getEyeColour()+" ## "+arrayPersonagens[j].getGender()+" ## "+
-            arrayPersonagens[j].getHairColour()+" ## "+arrayPersonagens[j].getWizard()+"]");
-        }
-    }
-}
-
-
-public class Q7{
+public class Q1{
     static private String[] lerLinha(String linha){
         String[] linhaLida = linha.split(";");
         for(int i=0; i<linhaLida.length;i++){
             if(linhaLida[i].equals("[]")){
-                linhaLida[i] = "";
+                linhaLida[i] = "0";
             }else{
                 linhaLida[i] = linhaLida[i].replace("[","");
                 linhaLida[i] = linhaLida[i].replace("]","");
@@ -289,7 +193,7 @@ public class Q7{
 
     static private Personagem[] criacaoDePersonagem(){
         Personagem[] vetorPersonagens = new Personagem[406];
-        Arq.openRead("/tmp/characters.csv");
+        Arq.openRead("characters.csv");
         for(int i=0 ;i<405 ;i++){
             String linhaArquivo = Arq.readLine();
             if(i>0){
@@ -331,41 +235,23 @@ public class Q7{
         return vetorPersonagens;
     }
 
-    static private Personagem[] procuraPorId(Personagem[] personagens, List<String> procura){
-        int tamanho = procura.size();
-        Personagem[] arrayPersonagens = new Personagem[tamanho];
-        for(int i=0;i<tamanho;i++){     
-            for(int j=0; j<404;j++){
-                String idPersonagem = personagens[j].getId();
-                if(idPersonagem.equals(procura.get(i))){
-                    arrayPersonagens[i] = personagens[j];
-                }
-            } 
+    static private void procuraPorId(Personagem[] personagens, String procura){
+        for(int i=0;i<404;i++){
+            String idPersonagem = personagens[i].getId(); 
+            if(idPersonagem.equals(procura)){
+                personagens[i].escrever();
+            }
         }
-        return arrayPersonagens;
     }
 
     public static void main(String[] args){
-        long inicio = System.currentTimeMillis();
-        int i=0;
         Scanner teclado = new Scanner(System.in);
         Personagem[] personagens = criacaoDePersonagem();
-        List<String> procura = new ArrayList<>();
-        String leitura = teclado.nextLine();
-        procura.add(leitura);
-        while(!procura.get(i).equals("FIM")){    
-            i++;
-            leitura = teclado.nextLine();
-            procura.add(leitura);
+        String procura = teclado.nextLine();
+        while(!procura.equals("FIM")){    
+            procuraPorId(personagens,procura);
+            procura = teclado.nextLine();
         }
-        Insercao ordenacaoInsercao = new Insercao(procuraPorId(personagens,procura));
-        Arq.openWrite("824137_insercao.txt");
-        ordenacaoInsercao.sort();
-        ordenacaoInsercao.escreverOrdenado();
         teclado.close();
-        long fim = System.currentTimeMillis(); 
-        long tempo = (fim-inicio);
-        Arq.print(tempo);
-        Arq.close();
     }
 }

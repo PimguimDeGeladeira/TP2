@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
-class Personagem implements Cloneable{
+class Personagem{
     private String id;
     private String name;
     private List<String> alternate_names;
@@ -174,79 +174,69 @@ class Personagem implements Cloneable{
         MyIO.print(dataFormatada.format(dateOfBirth));
         MyIO.println(" ## "+yearOfBirth+" ## "+eyeColour+" ## "+gender+" ## "+hairColour+" ## "+wizard+"]");
     }
-
-    @Override
-        public Object clone() throws CloneNotSupportedException {
-            //Personagem clonedPersonagem = (Personagem) super.clone();
-            //clonedPersonagem.alternate_names = new ArrayList<>(this.alternate_names);
-        
-            return super.clone();
-        }
 }
 
-class Insercao{
+class Merge{
     private int tamanho;
     private Personagem[] arrayPersonagens;
 	
-    public Insercao(Personagem[] arrayPersonagens){
+    public Merge(Personagem[] arrayPersonagens){
         this.arrayPersonagens = arrayPersonagens;
         tamanho = arrayPersonagens.length;
     }
 
-	public void sort(){
-        int comparacoes=0,movimentacoes=0;
-        for (int i = 1; i < tamanho-1; i++) {
-			Personagem tmp = criaPersonagem(arrayPersonagens[i]); 
-            tmp.setDateOfBirth(arrayPersonagens[i].getDateOfBirth());
-            int j = i - 1;
-            while ((j >= 0) && (compareHairColour(arrayPersonagens[j], tmp))>=0){
-                arrayPersonagens[j + 1] = arrayPersonagens[j];
-                j--;
-                comparacoes++;
-                movimentacoes++;
-            }
-            arrayPersonagens[j + 1] = tmp;
-            comparacoes++;
-            movimentacoes++;
+    public void sort() {
+        mergesort(0, tamanho-2);
+     }
+  
+     /**
+      * Algoritmo de ordenacao Mergesort.
+      * @param int esq inicio do array a ser ordenado
+      * @param int dir fim do array a ser ordenado
+      */
+    private void mergesort(int esq, int dir) {
+        if (esq < dir){
+           int meio = (esq + dir) / 2;
+           mergesort(esq, meio);
+           mergesort(meio + 1, dir);
+           intercalar(esq, meio, dir);
         }
-        Arq.print("824137");
-        Arq.print('\t');
-        Arq.print(comparacoes);
-        Arq.print('\t');
-        Arq.print(movimentacoes);
-        Arq.print('\t');
-	}
-
-    public Personagem criaPersonagem(Personagem tmp){
-        String id = tmp.getId();
-        String name = tmp.getName();
-        List<String> alternate_names = tmp.getAlternate_names();
-        String house = tmp.getHouse();
-        String ancestry = tmp.getAncestry();
-        String species = tmp.getSpecies();
-        String patronus = tmp.getPatronus();
-        Boolean hogwartsStaff = tmp.getHogwartsStaff();
-        String hogwartsStudent = tmp.getHogwarstsStudent();
-        String actorName = tmp.getActorName();
-        Boolean alive = tmp.getAlive();
-        Date dateOfBirth = tmp.getDateOfBirth();
-        int yearOfBirth = tmp.getYearOfBirth();
-        String eyeColour = tmp.getEyeColour();
-        String gender = tmp.getGender();
-        String hairColour = tmp.getHairColour();
-        Boolean wizard = tmp.getWizard();
-        Personagem novoPersonagem = new Personagem(id,name,alternate_names,house,ancestry,species,patronus,hogwartsStaff,hogwartsStudent,actorName,alive,dateOfBirth,
-        yearOfBirth,eyeColour,gender,hairColour,wizard);                
-        
-        return novoPersonagem;
     }
-
-    public static int compareHairColour(Personagem p1, Personagem p2){
-        int comparacao = p1.getDateOfBirth().compareTo(p2.getDateOfBirth());
-        if(comparacao == 0){
-            return p1.getName().compareTo(p2.getName());
+  
+     /**
+      * Algoritmo que intercala os elementos entre as posicoes esq e dir
+      * @param int esq inicio do array a ser ordenado
+      * @param int meio posicao do meio do array a ser ordenado
+      * @param int dir fim do array a ser ordenado
+      */ 
+      public void intercalar(int esq, int meio, int dir){
+        int n1, n2, i, j, k;
+  
+        //Definir tamanho dos dois subarrays
+        n1 = meio-esq+1;
+        n2 = dir - meio;
+  
+        Personagem[] a1 = new Personagem[n1];
+        Personagem[] a2 = new Personagem[n2];
+  
+        //Inicializar primeiro subarray
+        for(i = 0; i < n1-1; i++){
+           a1[i] = arrayPersonagens[esq+i];
         }
-        return comparacao;
+  
+        //Inicializar segundo subarray
+        for(j = 0; j < n2-1; j++){
+           a2[j] = arrayPersonagens[meio+j+1];
+        }
+  
+        //Sentinela no final dos dois arrays
+        //a1[i-1].setActorName("ZZZZZZZZZZZZZZ"); 
+        //a2[j-1].setActorName("ZZZZZZZZZZZZZZ");
+  
+        //Intercalacao propriamente dita
+        for(i = j = 0, k = esq; k <= dir; k++){
+            arrayPersonagens[k] = (a1[i].getActorName().compareTo(a2[j].getActorName()) >= 0) ? a1[i++] : a2[j++];
+        }
     }
 
     public void escreverOrdenado(){
@@ -272,7 +262,7 @@ class Insercao{
 }
 
 
-public class Q7{
+public class Q13{
     static private String[] lerLinha(String linha){
         String[] linhaLida = linha.split(";");
         for(int i=0; i<linhaLida.length;i++){
@@ -289,7 +279,7 @@ public class Q7{
 
     static private Personagem[] criacaoDePersonagem(){
         Personagem[] vetorPersonagens = new Personagem[406];
-        Arq.openRead("/tmp/characters.csv");
+        Arq.openRead("characters.csv");
         for(int i=0 ;i<405 ;i++){
             String linhaArquivo = Arq.readLine();
             if(i>0){
@@ -358,10 +348,10 @@ public class Q7{
             leitura = teclado.nextLine();
             procura.add(leitura);
         }
-        Insercao ordenacaoInsercao = new Insercao(procuraPorId(personagens,procura));
-        Arq.openWrite("824137_insercao.txt");
-        ordenacaoInsercao.sort();
-        ordenacaoInsercao.escreverOrdenado();
+        Merge ordenacaoMerge = new Merge(procuraPorId(personagens,procura));
+        Arq.openWrite("824137_mergesort.txt");
+        ordenacaoMerge.sort();
+        ordenacaoMerge.escreverOrdenado();
         teclado.close();
         long fim = System.currentTimeMillis(); 
         long tempo = (fim-inicio);
